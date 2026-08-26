@@ -64,14 +64,41 @@ Category is a free-form grouping (`language/`, `style/`, `workflow/`, ...).
 enforces. A mixin file has no frontmatter, just the instruction text, written
 the way it should read once it lands in the instructions file.
 
+Wrap that instruction text in an XML tag named `<user-<category>-preference>`.
+The tag tells the model this is a standing preference, not surrounding prose,
+and keeps the block easy to spot when it's pasted into an instructions file.
+Look at the existing files under `library/` for the pattern, for example
+`library/style/no-em-dash.md`:
+
+```
+<user-style-preference>
+Never use an em dash (—) in code, comments, or discussion. Use a comma,
+period, or parentheses instead.
+</user-style-preference>
+```
+
+or `library/workflow/commit-only-when-asked.md`:
+
+```
+<user-workflow-preference>
+Never commit or push unless explicitly told to.
+</user-workflow-preference>
+```
+
+The tag name matches the mixin's category (`git` -> `user-git-preference`,
+`language` -> `user-language-preference`, and so on), so pick the tag to
+match whichever category directory the file lives in.
+
 This skill ships a starter catalog under `library/` (same shape, one level
 up). Copy from there or write new ones directly.
 
 ## Create a mixin
 
 1. Pick or make a category directory under `mixins/`.
-2. Write the single directive to `mixins/<category>/<name>.md`. Keep it to a
-   sentence or two, one behavior, no bundling multiple rules in one file.
+2. Write the single directive to `mixins/<category>/<name>.md`, wrapped in
+   a `<user-<category>-preference>` tag as shown above. Keep the instruction
+   itself to a sentence or two, one behavior, no bundling multiple rules in
+   one file.
 3. Wire it into the instructions file where that directive belongs:
    - Claude Code: add `@mixins/<category>/<name>.md`.
    - Any other harness: paste the file's contents between
